@@ -1,4 +1,4 @@
-# Pushy Me Notification Service With Cordova/PhoneGap
+# Pushy Me Notification Service With Cordova/PhoneGap For Android.
 
 ## Master branch:
  
