@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+	id="Cordova-Plugin-CDVPushyMe"
+	version="1.0.0-dev">
+	<name>Pushy Me Notification Service</name>
+	<description>Pushy Me Notification Service With Cordova/PhoneGap</description>
+	<license>Apache 2.0</license>
+	
+	<keywords>cordova,pushyme,notification</keywords>
+	
+	 <info>Cross Platform Pushy Me Notification Service With Cordova/PhoneGap android application </info>
+	 <repo>https://github.com/LokeshPatel/Cordova-Plugin-CDVPushyMe.git</repo>
+	 
+	 <js-module src="www/pushyme.js" name="CDVPushyMe">
+		<clobbers target="navigator.CDVPushyMe"/>
+	</js-module>
+	
+	<engines>
+        <engine name="cordova" version=">=3.0.0"/>
+    </engines>
+  <!-- android -->
+	<platform name="android">
+		<config-file target="AndroidManifest.xml" parent="/manifest/application">
+		 <receiver android:name="com.lokesh.CDVPushyMe.plugin.PushReceiver" >
+            <intent-filter>
+              <action android:name="pushy.me" />
+            </intent-filter>
+         </receiver>
+          <!-- Pushy Boot Receiver -->
+    <!-- Do not modify - internal BroadcastReceiver that restarts the listener service -->
+    <receiver android:name="me.pushy.sdk.receivers.PushyBootReceiver" >
+        <intent-filter>
+            <action android:name="android.intent.action.BOOT_COMPLETED"/>
+        </intent-filter>
+    </receiver>
+        <!-- Pushy Socket Service -->
+    <!-- Do not modify - internal listener background service -->
+    <service android:name="me.pushy.sdk.services.PushySocketService"/>
+    		</config-file>
+		<config-file target="AndroidManifest.xml" parent="/*">
+           <uses-permission android:name="android.permission.INTERNET" />
+            <uses-permission android:name="android.permission.WAKE_LOCK" />
+            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+            <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+        </config-file>
+		<config-file target="res/xml/config.xml" parent="/*">
+			 <feature name="CDVPlushyMePlugin">
+                <param name="android-package" value="com.lokesh.CDVPushyMe.plugin.CDVPlushyMePlugin"/>
+           </feature>
+		</config-file>
+		<lib-file src="src/android/libs/pushy-1.0.7.jar"/>   
+		<source-file src="src/android/CDVPlushyMePlugin.java" target-dir="src/com/lokesh/CDVPushyMe/plugin" />
+		<source-file src="src/android/PushReceiver.java" target-dir="src/com/lokesh/CDVPushyMe/plugin" />
+	</platform>
+</plugin>

@@ -1,0 +1,21 @@
+{
+  "name": "Cordova-Plugin-CDVPushyMe",
+  "version": "1.0.0-dev",
+  "description": "cordova plugin CDVPushyMe",
+  "cordova": {
+    "id": "Cordova-Plugin-CDVPushyMe",
+    "platforms": ["android"]
+    },
+    "repository": {
+      "type": "",
+      "url": ""
+      },
+      "keywords": [
+      "cordova",
+      "pushy Me",
+      "CDVPushyMe",
+      "cordova-android"
+      ],
+      "author": "Lokesh Patel",
+      "license": "Apache 2.0"
+}
