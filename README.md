@@ -12,7 +12,7 @@ cordova plugin add Cordova-Plugin-CDVPushyMe --searchpath path
 
 ```
 
-## 1) Install pushy me service : call function on device ready function
+## 1) Install pushy me service : Call with on device ready function
 
  ```  
      navigator.CDVPushyMe.pushyMeInstall(function(){
