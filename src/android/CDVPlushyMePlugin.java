@@ -12,7 +12,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
 /**
  * This class echoes a string called from JavaScript.
@@ -41,6 +40,7 @@ public class CDVPlushyMePlugin extends CordovaPlugin {
         
         if (action.equals("installPlugin")) {
         	getPushyMelistenEvent(appContext);
+            return true;
         }
         return false;
     }
@@ -68,9 +68,13 @@ public class CDVPlushyMePlugin extends CordovaPlugin {
     		// Failed?
     		if ( exc != null )
     		{
-    			getBackContext.error(exc.toString());
+    			getBackContext.error(exc.getMessage().toString());
     			return;
     		}
+    		else
+    		{
+    			getBackContext.success();
+    		}		
     	}
 
     	void sendRegistrationIdToBackendServer(String registrationId,Context appContext) throws Exception
@@ -113,14 +117,14 @@ public class CDVPlushyMePlugin extends CordovaPlugin {
     public void getPushyMelistenEvent(Context context)
     {
     	final SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME,Context.MODE_PRIVATE);
-	    String registrationId = prefs.getString(PROPERTY_REG_ID_PushyMe, "");
+	    String registrationId = prefs.getString(PROPERTY_REG_ID_PushyMe,"");
 	    if(!registrationId.isEmpty())
 	    {
     	    Pushy.listen(context);
 	    }
-     else
-	    {	
-	     cordova.getActivity().runOnUiThread(new Runnable() {
+      else
+	    {
+    	 cordova.getActivity().runOnUiThread(new Runnable() {
             public void run() {
             	new registerForPushNotificationsAsync().execute();	
             }

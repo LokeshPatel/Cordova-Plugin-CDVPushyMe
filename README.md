@@ -15,11 +15,11 @@ cordova plugin add Cordova-Plugin-CDVPushyMe --searchpath path
 ## 1) Install pushy me service : Call with on device ready function
 
  ```  
-     navigator.CDVPushyMe.pushyMeInstall(function(){
-       console.log("success");
-     }, function(error){
-       console.log("fail");
-    });
+        navigator.CDVPushyMe.pushyMeInstall(function(e){
+          console.log("success");
+        }, function(error){
+          console.log(error);
+        });
      
  ``` 
   
@@ -30,7 +30,7 @@ cordova plugin add Cordova-Plugin-CDVPushyMe --searchpath path
         console.log("Token ID = " + tokenID);
         //Token ID use for call notification form pusyme server.
      }, function(error){
-        console.log("fail");
+        console.log(error);
      });
 ```
 
