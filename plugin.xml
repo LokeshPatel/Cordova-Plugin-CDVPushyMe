@@ -21,6 +21,11 @@
   <!-- android -->
 	<platform name="android">
 		<config-file target="AndroidManifest.xml" parent="/manifest/application">
+	
+	    <activity android:name="com.lokesh.CDVPushyMe.plugin.PushyMeHandlerActivity" 
+            android:theme="@android:style/Theme.Black.NoTitleBar">
+        </activity>   
+    
 		 <receiver android:name="com.lokesh.CDVPushyMe.plugin.PushReceiver" >
             <intent-filter>
               <action android:name="pushy.me" />
@@ -51,5 +56,6 @@
 		<lib-file src="src/android/libs/pushy-1.0.7.jar"/>   
 		<source-file src="src/android/CDVPlushyMePlugin.java" target-dir="src/com/lokesh/CDVPushyMe/plugin" />
 		<source-file src="src/android/PushReceiver.java" target-dir="src/com/lokesh/CDVPushyMe/plugin" />
+	    <source-file src="src/android/PushyMeHandlerActivity.java" target-dir="src/com/lokesh/CDVPushyMe/plugin" />
 	</platform>
 </plugin>

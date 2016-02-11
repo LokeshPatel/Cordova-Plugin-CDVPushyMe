@@ -1,78 +1,82 @@
 package com.lokesh.CDVPushyMe.plugin;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
 
-public class PushReceiver extends BroadcastReceiver
+// Referenced classes of package com.lokesh.CDVPushyMe.plugin:
+//            PushHandlerActivity
+
+@SuppressLint("NewApi") public class PushReceiver extends BroadcastReceiver
 {
-    @Override
+
+    private static final String TAG = "Pushy Me Intent Service";
+   @Override
     public void onReceive(Context context, Intent intent)
     {
-        //-----------------------------
-        // Create a test notification
-        //
-        // (Use deprecated notification
-        // API for demonstration purposes,
-        // to avoid having to import
-        // the Android Support Library)
-        //-----------------------------
+		Log.d(TAG, "onMessage - context: " + context);
+		// Extract the payload from the message
+		Bundle extras = intent.getExtras();
+		if (extras != null)
+		{
+	           // Send a notification if there is a message
+               if (extras.getString("message") != null && extras.getString("message").length() != 0) {
+                   createNotification(context, extras);
+               }
+         }
+    }
+    private static String getAppName(Context context)
+    {
+        return (String)context.getPackageManager().getApplicationLabel(context.getApplicationInfo());
+    }
 
-        String notificationTitle = "Pushy";
-        String notificationDesc = "Test notification";
+	public void createNotification(Context context, Bundle extras)
+    {
+    	NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		String appName = getAppName(context);
 
-        //-----------------------------
-        // Attempt to grab the message
-        // property from the payload
-        //
-        // We will be sending the following
-        // test push notification:
-        //
-        // {"message":"Hello World!"}
-        //-----------------------------
+		Intent notificationIntent = new Intent(context, PushyMeHandlerActivity.class);
+		notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		notificationIntent.putExtra("pushBundle", extras);
 
-        if ( intent.getStringExtra("message") != null )
-        {
-            notificationDesc = intent.getStringExtra("message");
-        }
+		PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		
+		int defaults = Notification.DEFAULT_ALL;
 
-        //-----------------------------
-        // Create a test notification
-        //-----------------------------
+		if (extras.getString("defaults") != null) {
+			try {
+				defaults = Integer.parseInt(extras.getString("defaults"));
+			} catch (NumberFormatException e) {}
+		}
+		
+		Notification.Builder mBuilder =
+			new Notification.Builder(context)
+				.setDefaults(defaults)
+				.setSmallIcon(context.getApplicationInfo().icon)
+				.setWhen(System.currentTimeMillis())
+				.setContentTitle(appName)
+				.setTicker(extras.getString("title"))
+				.setContentIntent(contentIntent)
+				.setAutoCancel(true);
 
-        Notification notification = new Notification(android.R.drawable.ic_dialog_info, notificationDesc, System.currentTimeMillis());
+		String message = extras.getString("message");
+		if (message != null) {
+			mBuilder.setContentText(message);
+		} else {
+			mBuilder.setContentText("<missing message content>");
+		}
 
-        //-----------------------------
-        // Sound + vibrate + light
-        //-----------------------------
-
-        notification.defaults = Notification.DEFAULT_ALL;
-
-        //-----------------------------
-        // Dismisses when pressed
-        //-----------------------------
-
-        notification.flags = Notification.FLAG_AUTO_CANCEL;
-
-        //-----------------------------
-        // Create pending intent
-        // without a real intent
-        //-----------------------------
-
-        notification.setLatestEventInfo(context, notificationTitle, notificationDesc, null);
-
-        //-----------------------------
-        // Get notification manager
-        //-----------------------------
-
-        NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-        //-----------------------------
-        // Show the notification
-        //-----------------------------
-
-        mNotificationManager.notify(0, notification);
+		String msgcnt = extras.getString("msgcnt");
+		if (msgcnt != null) {
+			mBuilder.setNumber(Integer.parseInt(msgcnt));
+		}
+		int notId = 0;
+		mNotificationManager.notify((String) appName, notId, mBuilder.build());
     }
 }

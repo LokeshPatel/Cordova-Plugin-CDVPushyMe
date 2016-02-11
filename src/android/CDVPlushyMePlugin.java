@@ -1,10 +1,15 @@
 package com.lokesh.CDVPushyMe.plugin;
 
 import me.pushy.sdk.Pushy;
+
+import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
+import org.apache.cordova.CordovaWebView;
 import org.json.JSONArray;
 import org.json.JSONException;
+
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -24,6 +29,7 @@ public class CDVPlushyMePlugin extends CordovaPlugin {
 	  public static final String PREFS_NAME = "PushyMeData";
 	public CallbackContext getBackContext;
 	public Context appContext =null;
+	private static CordovaWebView gWebView;
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
     	appContext = cordova.getActivity().getApplicationContext();
@@ -131,5 +137,33 @@ public class CDVPlushyMePlugin extends CordovaPlugin {
            });
 	    }
 	}
+    @Override
+    public void initialize(CordovaInterface cordova, CordovaWebView webView) {
+        super.initialize(cordova, webView);
+    }
+
+	@Override
+    public void onPause(boolean multitasking) {
+        super.onPause(multitasking);
+        final NotificationManager notificationManager = (NotificationManager) cordova.getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
+    }
+
+    @Override
+    public void onResume(boolean multitasking) {
+        super.onResume(multitasking);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+		gWebView = null;
+    }
+
+   
+ public static boolean isActive()
+    {
+    	return gWebView != null;
+    }
 }
 
