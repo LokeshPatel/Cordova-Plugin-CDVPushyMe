@@ -8,6 +8,7 @@ import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaWebView;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.NotificationManager;
 import android.content.Context;
@@ -17,6 +18,9 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.AsyncTask;
 import android.util.Log;
+
+import java.util.ArrayList;
+
 
 /**
  * This class echoes a string called from JavaScript.
@@ -29,28 +33,59 @@ public class CDVPlushyMePlugin extends CordovaPlugin {
 	  public static final String PREFS_NAME = "PushyMeData";
 	public CallbackContext getBackContext;
 	public Context appContext =null;
-	private static CordovaWebView gWebView;
-    @Override
+	@Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
     	appContext = cordova.getActivity().getApplicationContext();
-    	getBackContext = callbackContext; 
+    	getBackContext = callbackContext;
     	if (action.equals("pushyMeTokenID")) {
         	final SharedPreferences prefs = getPushyMePreferences(appContext);
-    		String registrationId = prefs.getString(PROPERTY_REG_ID_PushyMe, "");	
+    		String registrationId = prefs.getString(PROPERTY_REG_ID_PushyMe, "");
             if(registrationId.isEmpty())
             new registerForPushNotificationsAsync().execute();
             else
-            getBackContext.success(registrationId); 	
+            getBackContext.success(registrationId);
             return true;
         }
-        
-        if (action.equals("installPlugin")) {
+
+       else if (action.equals("installPlugin")) {
         	getPushyMelistenEvent(appContext);
             return true;
         }
-        return false;
+
+		else if (action.equals("getAllMessages")) {
+            PushReceiver pushMessage = new PushReceiver();
+			JSONObject jsonObject = pushMessage.getNotificationOnSharedPreferences(appContext);
+			getBackContext.success(jsonObject.toString());
+			return true;
+		}
+		else if (action.equals("clearMessageFromStore")) {
+			PushReceiver pushMessage = new PushReceiver();
+			pushMessage.removeNotificationOnSharedPreferences(appContext);
+			getBackContext.success();
+			return true;
+		}
+		else if (action.equals("clearMessageByIdFromStore")) {
+			try {
+				String getMsgID = args.getString(0);
+				if (getMsgID == null) {
+
+					getBackContext.error("Please insert valid message id");
+				} else {
+					PushReceiver pushMessage = new PushReceiver();
+					pushMessage.removeNotificationWithIDOnSharedPreferences(appContext, getMsgID);
+					getBackContext.success();
+				}
+			}
+			catch (Exception e)
+			{
+				getBackContext.error(e.getMessage());
+			}
+			return true;
+		}
+
+		 return false;
     }
-    
+
     private class registerForPushNotificationsAsync extends AsyncTask<Void, Void, Exception>
     {
     	protected Exception doInBackground(Void... params)
@@ -80,7 +115,7 @@ public class CDVPlushyMePlugin extends CordovaPlugin {
     		else
     		{
     			getBackContext.success();
-    		}		
+    		}
     	}
 
     	void sendRegistrationIdToBackendServer(String registrationId,Context appContext) throws Exception
@@ -89,7 +124,7 @@ public class CDVPlushyMePlugin extends CordovaPlugin {
     	   getBackContext.success(registrationId);
     	}
     }
-    
+
     private void storeRegistrationId(Context context, String regId,String property_Reg_ID) {
 	    final SharedPreferences prefs = getPushyMePreferences(context);
 	    String appVersion = getVersionID(context);
@@ -99,11 +134,11 @@ public class CDVPlushyMePlugin extends CordovaPlugin {
 	    editor.putString(PROPERTY_APP_VERSION, appVersion);
 	    editor.commit();
 	}
-    
+
     private SharedPreferences getPushyMePreferences(Context context) {
         return  context.getSharedPreferences(PREFS_NAME,Context.MODE_PRIVATE);
 	}
-    
+
     private String getVersionID(Context context)
     {
     	PackageManager manager = context.getPackageManager();
@@ -119,7 +154,7 @@ public class CDVPlushyMePlugin extends CordovaPlugin {
  		}
  	       return getid;
     }
-    
+
     public void getPushyMelistenEvent(Context context)
     {
     	final SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME,Context.MODE_PRIVATE);
@@ -132,7 +167,7 @@ public class CDVPlushyMePlugin extends CordovaPlugin {
 	    {
     	 cordova.getActivity().runOnUiThread(new Runnable() {
             public void run() {
-            	new registerForPushNotificationsAsync().execute();	
+            	new registerForPushNotificationsAsync().execute();
             }
            });
 	    }
@@ -157,13 +192,6 @@ public class CDVPlushyMePlugin extends CordovaPlugin {
     @Override
     public void onDestroy() {
         super.onDestroy();
-		gWebView = null;
-    }
 
-   
- public static boolean isActive()
-    {
-    	return gWebView != null;
     }
 }
-
