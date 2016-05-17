@@ -23,28 +23,8 @@ public class PushyMeHandlerActivity extends Activity
 	{
 		super.onCreate(savedInstanceState);
 		Log.v(TAG, "onCreate");
-
-		boolean isPushPluginActive = CDVPlushyMePlugin.isActive();
-		processPushBundle(isPushPluginActive);
-		finish();
-		if (!isPushPluginActive) {
-			forceMainActivityReload();
-		}
-	}
-
-	/**
-	 * Takes the pushBundle extras from the intent, 
-	 * and sends it through to the PushPlugin for processing.
-	 */
-	private void processPushBundle(boolean isPushPluginActive)
-	{
-		Bundle extras = getIntent().getExtras();
-		if (extras != null)	{
-			Bundle originalExtras = extras.getBundle("pushBundle");
-            originalExtras.putBoolean("coldstart", !isPushPluginActive);
-		}
-	}
-	/**
+    }
+  /**
 	 * Forces the main activity to re-launch if it's unloaded.
 	 */
 	private void forceMainActivityReload()
