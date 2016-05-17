@@ -33,6 +33,36 @@ cordova plugin add Cordova-Plugin-CDVPushyMe --searchpath path
         console.log(error);
      });
 ```
+## 3) Message store in local store : Read all message  
+  ```
+ navigator.CDVPushyMe.pushyMeReadAllMessages(function(result){
+     /* Return all message in json formate with id and message */
+   console.log(result);
+ },function(e){console.log(e)}
+ );
+ 
+ /* Result format : {"msg_1":"Hello World One !","msg_2":"Hello World Two!","msg_3":"Hello World Three!","totalCount":3} */
+```
+## 4) Remove all messages from local store  
+  ```
+     navigator.CDVPushyMe.pushyMeClearAllMessages(function(result){
+        console.log(result);
+       
+     }, function(error){
+        console.log(error);
+     });
+```
+
+## 5) Remove messages from local store (one by one) : 
+  ```
+     navigator.CDVPushyMe.pushyMeClearByMessagesId(function(result){
+        console.log(result);
+      }, function(error){
+        console.log(error);
+     },"msg_1");
+     
+     /* Message get from local store list */
+```
 
 Reference: [Pushy-Me Doc](https://pushy.me/docs)
 
