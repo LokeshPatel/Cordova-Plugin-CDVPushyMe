@@ -66,3 +66,5 @@ cordova plugin add Cordova-Plugin-CDVPushyMe --searchpath path
 
 Reference: [Pushy-Me Doc](https://pushy.me/docs)
 
+<a href="https://www.paypal.me/LokeshPatel" target="_blank"><img src="https://dl.dropboxusercontent.com/s/r5azqieu9stu0pc/pay-now-button-afme.png?dl=0" alt="Count 0" width="160"/></a>
+
